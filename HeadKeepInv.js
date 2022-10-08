@@ -1,4 +1,7 @@
-ll.registerPlugin("HeadKeepInv", "Keep Inventory with Head!", [1,1,0]);
+//LiteLoaderScript Dev Helper
+/// <reference path="c:\Users\zhang\Dropbox\Aids/dts/HelperLib-master/src/index.d.ts"/> 
+
+ll.registerPlugin("HeadKeepInv", "Keep Inventory with Head!", [1,1,1]);
 
 function CheckHead(pl){
     let itemlist = pl.getInventory().getAllItems();
@@ -50,7 +53,10 @@ function DropInventory(pl) {
         }
     }
     pl.getArmor().removeAllItems();
-    pl.refreshItems();
+
+    let offhandItem = pl.getOffHand();
+    mc.spawnItem(offhandItem, pl.pos);
+    pl.clearItem(offhandItem.type);
 }
 
 
