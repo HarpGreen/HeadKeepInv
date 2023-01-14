@@ -1,7 +1,12 @@
 //LiteLoaderScript Dev Helper
 /// <reference path="c:\Users\zhang\Dropbox\Aids/dts/HelperLib-master/src/index.d.ts"/> 
 
-ll.registerPlugin("HeadKeepInv", "Keep Inventory with Head!", [1, 2, 0]);
+ll.registerPlugin("HeadKeepInv", "Keep Inventory with Head!", [1, 2, 1]);
+// Basic Logger added
+
+logger.setConsole(true);
+logger.setFile("./logs/HeadKeepInv.log", 4);
+logger.setTitle("HeadKeepInv");
 
 function CheckHead(pl) {
     let itemlist = pl.getInventory().getAllItems();
@@ -55,11 +60,18 @@ function hasCurseofVanishing(it) {
 }
 
 function DropInventory(pl) {
+    let droplog = pl.name+","+pl.blockPos.x+","+pl.blockPos.y+","+pl.blockPos.z+","+pl.blockPos.dimid+",";
+
     let itemlist = pl.getInventory().getAllItems();
     for (let it of itemlist) {
         if (!it.isNull()) {
             if (!hasCurseofVanishing(it)) {
                 mc.spawnItem(it, pl.pos);
+                try{
+                    droplog+=it.type+"*"+it.count+",";
+                }catch(e){
+                    logger.error(e);
+                }
             }
         }
     }
@@ -70,6 +82,11 @@ function DropInventory(pl) {
         if (!ar.isNull()) {
             if (!hasCurseofVanishing(ar)) {
                 mc.spawnItem(ar, pl.pos);
+                try{
+                    droplog+=ar.type+"*"+ar.count+",";
+                }catch(e){
+                    logger.error(e);
+                }
             }
         }
     }
@@ -78,10 +95,17 @@ function DropInventory(pl) {
     let offhandItem = pl.getOffHand();
     if (!hasCurseofVanishing(offhandItem)) {
         mc.spawnItem(offhandItem, pl.pos);
+        try{
+            droplog+=offhandItem.type+"*"+offhandItem.count+",";
+        }catch(e){
+            logger.error(e);
+        }
     }
     pl.clearItem(offhandItem.type);
 
     pl.refreshItems();
+
+    logger.warn(droplog);
 }
 
 //死亡的玩家会掉落价值为“经验等级×7”经验值的经验球，且总价值最大为100点（足够从0级升级到7级），其余的经验值会遗失。
