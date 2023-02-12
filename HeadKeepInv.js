@@ -1,7 +1,7 @@
 //LiteLoaderScript Dev Helper
 /// <reference path="c:\Users\zhang\Dropbox\Aids/dts/HelperLib-master/src/index.d.ts"/> 
 
-ll.registerPlugin("HeadKeepInv", "Keep Inventory with Head!", [1, 2, 1]);
+ll.registerPlugin("HeadKeepInv", "Keep Inventory with Head!", [1, 2, 2]);
 // Basic Logger added
 
 logger.setConsole(true);
@@ -32,7 +32,7 @@ function RemoveHead(pl) {
 
     let itemlist = pl.getInventory().getAllItems();
     let count = 0;
-    for (i of itemlist) {
+    for (let i of itemlist) {
         if (i.type == "minecraft:skull" && i.aux == 3) {
             pl.getInventory().removeItem(count, 1);
             break;
