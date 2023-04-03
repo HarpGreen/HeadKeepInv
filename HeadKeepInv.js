@@ -1,12 +1,19 @@
 //LiteLoaderScript Dev Helper
 /// <reference path="c:\Users\zhang\Dropbox\Aids/dts/HelperLib-master/src/index.d.ts"/> 
 
-ll.registerPlugin("HeadKeepInv", "Keep Inventory with Head!", [1, 2, 2]);
+ll.registerPlugin("HeadKeepInv", "Keep Inventory with Head!", [1, 2, 3]);
 // Basic Logger added
+// OffhandDrop can be turned off
 
 logger.setConsole(true);
 logger.setFile("./logs/HeadKeepInv.log", 4);
 logger.setTitle("HeadKeepInv");
+
+// ******************************************************************
+// LL 1.12.3 在执行clearItem()清除副手物品时出现问题，后台报错，并且玩家副手物品被复制
+// 临时解决一下：“直接把副手掉落部分去掉”
+var OffhandDrop = false; // 副手掉落开关
+// ******************************************************************
 
 function CheckHead(pl) {
     let itemlist = pl.getInventory().getAllItems();
@@ -60,16 +67,16 @@ function hasCurseofVanishing(it) {
 }
 
 function DropInventory(pl) {
-    let droplog = pl.name+","+pl.blockPos.x+","+pl.blockPos.y+","+pl.blockPos.z+","+pl.blockPos.dimid+",";
+    let droplog = pl.name + "," + pl.blockPos.x + "," + pl.blockPos.y + "," + pl.blockPos.z + "," + pl.blockPos.dimid + ",";
 
     let itemlist = pl.getInventory().getAllItems();
     for (let it of itemlist) {
         if (!it.isNull()) {
             if (!hasCurseofVanishing(it)) {
                 mc.spawnItem(it, pl.pos);
-                try{
-                    droplog+=it.type+"*"+it.count+",";
-                }catch(e){
+                try {
+                    droplog += it.type + "*" + it.count + ",";
+                } catch (e) {
                     logger.error(e);
                 }
             }
@@ -82,9 +89,9 @@ function DropInventory(pl) {
         if (!ar.isNull()) {
             if (!hasCurseofVanishing(ar)) {
                 mc.spawnItem(ar, pl.pos);
-                try{
-                    droplog+=ar.type+"*"+ar.count+",";
-                }catch(e){
+                try {
+                    droplog += ar.type + "*" + ar.count + ",";
+                } catch (e) {
                     logger.error(e);
                 }
             }
@@ -93,19 +100,20 @@ function DropInventory(pl) {
     pl.getArmor().removeAllItems();
 
     let offhandItem = pl.getOffHand();
-    if (!hasCurseofVanishing(offhandItem)) {
-        mc.spawnItem(offhandItem, pl.pos);
-        try{
-            droplog+=offhandItem.type+"*"+offhandItem.count+",";
-        }catch(e){
-            logger.error(e);
+    if (offhandItem && OffhandDrop) {        // 防止因为clearItem()问题导致副手刷物品
+        if (!hasCurseofVanishing(offhandItem)) {
+            mc.spawnItem(offhandItem, pl.pos);
+            try {
+                droplog += offhandItem.type + "*" + offhandItem.count + ",";
+            } catch (e) {
+                logger.error(e);
+            }
         }
+        pl.clearItem(offhandItem.type);
     }
-    pl.clearItem(offhandItem.type);
 
-    pl.refreshItems();
-
-    logger.warn(droplog);
+	pl.refreshItems();
+    logger.info(droplog);
 }
 
 //死亡的玩家会掉落价值为“经验等级×7”经验值的经验球，且总价值最大为100点（足够从0级升级到7级），其余的经验值会遗失。
