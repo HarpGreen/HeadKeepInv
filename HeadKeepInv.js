@@ -1,5 +1,5 @@
 
-ll.registerPlugin("HeadKeepInv", "Keep Inventory with Head!", [1, 2, 3]);
+ll.registerPlugin("HeadKeepInv", "Keep Inventory with Head!", [1, 2, 4]);
 // Basic Logger added
 // OffhandDrop can be turned off
 
