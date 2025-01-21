@@ -1,5 +1,3 @@
-//LiteLoaderScript Dev Helper
-/// <reference path="c:\Users\zhang\Dropbox\Aids/dts/HelperLib-master/src/index.d.ts"/> 
 
 ll.registerPlugin("HeadKeepInv", "Keep Inventory with Head!", [1, 2, 3]);
 // Basic Logger added
@@ -15,23 +13,25 @@ logger.setTitle("HeadKeepInv");
 var OffhandDrop = false; // 副手掉落开关
 // ******************************************************************
 
+const HEAD_ID = "minecraft:player_head"
+
 function CheckHead(pl) {
     let itemlist = pl.getInventory().getAllItems();
     let count = 0;
     for (let i of itemlist) {
-        if (i.type == "minecraft:skull" && i.aux == 3) {
+        if (i.type == HEAD_ID) {
             count += i.count;
         }
     }
     let helmet = pl.getArmor().getItem(0);
-    if (helmet.type == "minecraft:skull" && helmet.aux == 3) {
+    if (helmet.type == HEAD_ID) {
         count += 1;
     }
     return count;
 }
 function RemoveHead(pl) {
     let helmet = pl.getArmor().getItem(0);
-    if (helmet.type == "minecraft:skull" && helmet.aux == 3) {
+    if (helmet.type == HEAD_ID) {
         pl.getArmor().removeItem(0, 1);
         pl.refreshItems();
         return;
@@ -40,7 +40,7 @@ function RemoveHead(pl) {
     let itemlist = pl.getInventory().getAllItems();
     let count = 0;
     for (let i of itemlist) {
-        if (i.type == "minecraft:skull" && i.aux == 3) {
+        if (i.type == HEAD_ID) {
             pl.getInventory().removeItem(count, 1);
             break;
         }
